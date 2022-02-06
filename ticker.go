@@ -33,7 +33,7 @@ func (client *SecClient) GetAllTickers() ([]Ticker, error) {
 	}
 
 	httpClient := &http.Client{}
-	req, err := client.GetHttpGetRequestWithProperHeaders(TickerEndpoint)
+	req, err := client.getHttpGetRequestWithProperHeaders(TickerEndpoint)
 	if err != nil {
 		return nil, err
 	}

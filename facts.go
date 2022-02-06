@@ -42,11 +42,21 @@ type Unit struct {
 
 func (client *SecClient) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, error) {
 
+	if client.persistenceLayer != nil {
+		persistedFacts, err := client.persistenceLayer.LoadFacts(ticker)
+		if err != nil {
+			return CompanyFacts{}, err
+		}
+
+		if persistedFacts != nil {
+			return *persistedFacts, nil
+		}
+	}
+
 	httpClient := &http.Client{}
-	req, err := client.GetHttpGetRequestWithProperHeaders(factEndpointUrl(ticker))
+	req, err := client.getHttpGetRequestWithProperHeaders(factEndpointUrl(ticker))
 
 	client.bucket.Take()
-	fmt.Println("Requesting facts from " + factEndpointUrl(ticker))
 	response, err := httpClient.Do(req)
 
 	if err != nil {
@@ -63,6 +73,13 @@ func (client *SecClient) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, erro
 	err = json.Unmarshal(body, &companyFacts)
 	if err != nil {
 		return CompanyFacts{}, err
+	}
+
+	if client.persistenceLayer != nil {
+		err := client.persistenceLayer.SaveFacts(ticker, &companyFacts)
+		if err != nil {
+			return CompanyFacts{}, nil
+		}
 	}
 
 	return companyFacts, nil
