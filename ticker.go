@@ -27,7 +27,7 @@ func (client *SecClient) GetAllTickers() ([]Ticker, error) {
 
 	// If tickers are cached and younger than 5 minutes, return cached
 	if client.cachedTickers != nil {
-		if (client.cachedTickersTimeStamp + (5 * 1000 * 60)) < time.Now().UnixMilli() {
+		if (client.cachedTickersTimeStamp + (5 * 1000 * 60)) > time.Now().UnixMilli() {
 			return *client.cachedTickers, nil
 		}
 	}
@@ -60,6 +60,9 @@ func (client *SecClient) GetAllTickers() ([]Ticker, error) {
 	for _, v := range tickerMap {
 		tickers = append(tickers, v)
 	}
+
+	client.cachedTickers = &tickers
+	client.cachedTickersTimeStamp = time.Now().UnixMilli()
 
 	return tickers, nil
 }
