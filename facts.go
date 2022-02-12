@@ -54,7 +54,7 @@ func (client *SecClient) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, erro
 	}
 
 	httpClient := &http.Client{}
-	req, err := client.getHttpGetRequestWithProperHeaders(factEndpointUrl(ticker))
+	req, err := client.GetHttpGetRequestWithProperHeaders(factEndpointUrl(ticker))
 
 	client.bucket.Take()
 	response, err := httpClient.Do(req)
