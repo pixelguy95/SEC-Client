@@ -10,7 +10,7 @@ import (
 )
 
 type BoltPersistenceLayer struct {
-	db           *bbolt.DB
+	Db           *bbolt.DB
 	expiresAfter time.Duration
 }
 
