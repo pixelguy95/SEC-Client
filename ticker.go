@@ -3,6 +3,7 @@ package sec
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -33,7 +34,7 @@ func (client *SecClient) GetAllTickers() ([]Ticker, error) {
 	}
 
 	httpClient := &http.Client{}
-	req, err := client.getHttpGetRequestWithProperHeaders(TickerEndpoint)
+	req, err := client.GetHttpGetRequestWithProperHeaders(TickerEndpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -80,4 +81,19 @@ func (client *SecClient) GetTickerForSymbol(symbol string) (Ticker, error) {
 	}
 
 	return Ticker{}, errors.New("ticker with symbol " + symbol + " not found")
+}
+
+func (client *SecClient) GetTickerForCIK(cik uint64) (Ticker, error) {
+	tickers, err := client.GetAllTickers()
+	if err != nil {
+		return Ticker{}, err
+	}
+
+	for _, ticker := range tickers {
+		if ticker.CIK == cik {
+			return ticker, nil
+		}
+	}
+
+	return Ticker{}, errors.New("ticker with cik " + fmt.Sprintf("%d", cik) + " not found")
 }

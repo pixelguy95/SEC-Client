@@ -27,7 +27,12 @@ func NewSecClientWithPersistence(persistenceLayer PersistenceLayer) *SecClient {
 	return &SecClient{bucket: bucket, persistenceLayer: persistenceLayer}
 }
 
-func (client *SecClient) getHttpGetRequestWithProperHeaders(endpoint string) (*http.Request, error) {
+func (client *SecClient) WaitForToken() {
+	client.bucket.Take()
+	return
+}
+
+func (client *SecClient) GetHttpGetRequestWithProperHeaders(endpoint string) (*http.Request, error) {
 	req, err := http.NewRequest("GET", endpoint, nil)
 	req.Header.Add("Accept", `text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8`)
 	req.Header.Add("User-Agent", `sec-client`)
