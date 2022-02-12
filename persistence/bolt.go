@@ -34,11 +34,11 @@ func NewBoltPersistenceLayer(path string, expiresAfter time.Duration) (*BoltPers
 		return nil, err
 	}
 
-	return &BoltPersistenceLayer{db: db, expiresAfter: expiresAfter}, nil
+	return &BoltPersistenceLayer{Db: db, expiresAfter: expiresAfter}, nil
 }
 
 func (persistenceLayer *BoltPersistenceLayer) SaveFacts(ticker sec.Ticker, facts *sec.CompanyFacts) error {
-	err := persistenceLayer.db.Update(func(tx *bbolt.Tx) error {
+	err := persistenceLayer.Db.Update(func(tx *bbolt.Tx) error {
 
 		var pcf = &PersistedCompanyFacts{Facts: *facts, Timestamp: time.Now().UnixMilli()}
 		b := bytes.Buffer{}
@@ -62,7 +62,7 @@ func (persistenceLayer *BoltPersistenceLayer) LoadFacts(ticker sec.Ticker) (*sec
 
 	pcf := &PersistedCompanyFacts{}
 
-	err := persistenceLayer.db.View(func(tx *bbolt.Tx) error {
+	err := persistenceLayer.Db.View(func(tx *bbolt.Tx) error {
 
 		bucket := tx.Bucket([]byte("companyFacts"))
 		content := bucket.Get([]byte(ticker.Symbol))
