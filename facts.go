@@ -7,39 +7,6 @@ import (
 	"net/http"
 )
 
-type CompanyFacts struct {
-	CIK        uint64 `json:"cik"`
-	EntityName string `json:"entityName"`
-	Facts      Facts  `json:"facts"`
-}
-
-// A representation of a
-type Facts struct {
-	DEI    map[string]Fact `json:"dei"`
-	UsGAAP map[string]Fact `json:"us-gaap"`
-}
-
-type Fact struct {
-	Label       string            `json:"label"`
-	Description string            `json:"description"`
-	Units       map[string][]Unit `json:"units"`
-}
-
-type Unit struct {
-	Value float64 `json:"val"`
-
-	Start string `json:"start"`
-	End   string `json:"end"`
-
-	FiscalYear   uint16 `json:"fy"`
-	FiscalPeriod string `json:"fp"`
-
-	Account string `json:"accn"`
-
-	Form    string `json:"form"`
-	FiledOn string `json:"filed"`
-}
-
 func (client *SecClient) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, error) {
 
 	if client.persistenceLayer != nil {
