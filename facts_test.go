@@ -31,6 +31,9 @@ func TestGetCompanyFacts(t *testing.T) {
 	fmt.Println("Liabilities non-current")
 	for _, unit := range liabilitiesNonCurrent.Units["USD"] {
 		fmt.Println(unit)
+		if !unit.IsInstant() || unit.IsPeriod() {
+			t.Fatal("Liabilities non-current sohuld be instant and not period")
+		}
 	}
 
 	liabilitiesCurrent, ok := companyFacts.Facts.UsGAAP["LiabilitiesCurrent"]
@@ -46,5 +49,23 @@ func TestGetCompanyFacts(t *testing.T) {
 	fmt.Println("Liabilities current")
 	for _, unit := range liabilitiesCurrent.Units["USD"] {
 		fmt.Println(unit)
+	}
+
+	revenues, ok := companyFacts.Facts.UsGAAP["Revenues"]
+	if ok == false {
+		t.Fatal("Revenues was nil")
+	}
+
+	if len(revenues.Units["USD"]) <= 0 {
+		t.Fatal("Expected to find revenues (revenues)")
+	}
+
+	fmt.Println()
+	fmt.Println("Revenues")
+	for _, unit := range revenues.Units["USD"] {
+		fmt.Println(unit)
+		if !unit.IsPeriod() || unit.IsInstant() {
+			t.Fatal("Revenues should be period and not instant")
+		}
 	}
 }
