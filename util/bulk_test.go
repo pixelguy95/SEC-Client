@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -13,11 +12,15 @@ import (
 func TestBulk(t *testing.T) {
 	tempFile, err := os.Create("./full-facts-" + time.Now().Format(sec.SECDateFormat))
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		t.Fatal(err)
 	}
 
-	bolt, err := persistence.NewBoltPersistenceLayer(tempFile.Name(), time.Hour)
+	bolt, err := persistence.NewBoltPersistenceLayer(
+		persistence.BoltPersistenceLayerConfig{Path: tempFile.Name(), ExpiresAfter: time.Hour})
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	client := sec.NewSecClientWithPersistence(bolt)
 
 	err = ProcessBulkCompanyFactsData(client, bolt)

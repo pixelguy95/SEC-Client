@@ -10,17 +10,17 @@ import (
 )
 
 type BoltPersistenceLayer struct {
-	Db           *bbolt.DB
-	expiresAfter time.Duration
+	Db     *bbolt.DB
+	config BoltPersistenceLayerConfig
 }
 
-type PersistedCompanyFacts struct {
-	Timestamp int64
-	Facts     sec.CompanyFacts
+type BoltPersistenceLayerConfig struct {
+	Path         string
+	ExpiresAfter time.Duration
 }
 
-func NewBoltPersistenceLayer(path string, expiresAfter time.Duration) (*BoltPersistenceLayer, error) {
-	db, err := bbolt.Open(path, 0666, nil)
+func NewBoltPersistenceLayer(config BoltPersistenceLayerConfig) (*BoltPersistenceLayer, error) {
+	db, err := bbolt.Open(config.Path, 0666, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -34,12 +34,11 @@ func NewBoltPersistenceLayer(path string, expiresAfter time.Duration) (*BoltPers
 		return nil, err
 	}
 
-	return &BoltPersistenceLayer{Db: db, expiresAfter: expiresAfter}, nil
+	return &BoltPersistenceLayer{Db: db, config: config}, nil
 }
 
 func (persistenceLayer *BoltPersistenceLayer) SaveFacts(ticker sec.Ticker, facts *sec.CompanyFacts) error {
 	err := persistenceLayer.Db.Update(func(tx *bbolt.Tx) error {
-
 		var pcf = &PersistedCompanyFacts{Facts: *facts, Timestamp: time.Now().UnixMilli()}
 		b := bytes.Buffer{}
 		encoder := gob.NewEncoder(&b)
@@ -81,7 +80,7 @@ func (persistenceLayer *BoltPersistenceLayer) LoadFacts(ticker sec.Ticker) (*sec
 			return err
 		}
 
-		if (pcf.Timestamp + persistenceLayer.expiresAfter.Milliseconds()) < time.Now().UnixMilli() {
+		if (pcf.Timestamp + persistenceLayer.config.ExpiresAfter.Milliseconds()) < time.Now().UnixMilli() {
 			bucket.Delete([]byte(ticker.Symbol))
 			pcf = nil
 			return nil
