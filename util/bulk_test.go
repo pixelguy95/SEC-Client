@@ -10,13 +10,13 @@ import (
 )
 
 func TestBulk(t *testing.T) {
-	tempFile, err := os.Create("./full-facts-" + time.Now().Format(sec.SECDateFormat))
+	tempFile, err := os.Create("L:/full-facts-" + time.Now().Format(sec.SECDateFormat))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bolt, err := persistence.NewBoltPersistenceLayer(
-		persistence.BoltPersistenceLayerConfig{Path: tempFile.Name(), ExpiresAfter: time.Hour})
+		persistence.BoltPersistenceLayerConfig{Path: tempFile.Name(), ExpiresAfter: time.Hour, ReduceSize: true})
 	if err != nil {
 		t.Fatal(err)
 	}

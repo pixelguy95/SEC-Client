@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	bolt, err = NewBoltPersistenceLayer(BoltPersistenceLayerConfig{Path: tempFile.Name(), ExpiresAfter: time.Hour})
+	bolt, err = NewBoltPersistenceLayer(BoltPersistenceLayerConfig{Path: tempFile.Name(), ExpiresAfter: time.Hour, ReduceSize: false})
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

@@ -17,6 +17,7 @@ type BoltPersistenceLayer struct {
 type BoltPersistenceLayerConfig struct {
 	Path         string
 	ExpiresAfter time.Duration
+	ReduceSize   bool
 }
 
 func NewBoltPersistenceLayer(config BoltPersistenceLayerConfig) (*BoltPersistenceLayer, error) {
@@ -38,7 +39,19 @@ func NewBoltPersistenceLayer(config BoltPersistenceLayerConfig) (*BoltPersistenc
 }
 
 func (persistenceLayer *BoltPersistenceLayer) SaveFacts(ticker sec.Ticker, facts *sec.CompanyFacts) error {
-	err := persistenceLayer.Db.Update(func(tx *bbolt.Tx) error {
+	err := persistenceLayer.Db.Batch(func(tx *bbolt.Tx) error {
+		if persistenceLayer.config.ReduceSize {
+			for _, value := range facts.Facts.UsGAAP {
+				value.Description = ""
+				value.Label = ""
+			}
+
+			for _, value := range facts.Facts.DEI {
+				value.Description = ""
+				value.Label = ""
+			}
+		}
+
 		var pcf = &PersistedCompanyFacts{Facts: *facts, Timestamp: time.Now().UnixMilli()}
 		b := bytes.Buffer{}
 		encoder := gob.NewEncoder(&b)
