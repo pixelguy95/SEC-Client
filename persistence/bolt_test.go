@@ -30,14 +30,14 @@ func TestMain(m *testing.M) {
 }
 
 func TestBoltPersistenceLayer(t *testing.T) {
-	client := sec.NewSecClientWithPersistence(bolt)
+	client := sec.NewClientWithPersistence(bolt)
 
 	ticker, _ := client.GetTickerForSymbol("AAPL")
 
-	client.GetAllFactsForTicker(ticker)
-	client.GetAllFactsForTicker(ticker)
-	client.GetAllFactsForTicker(ticker)
-	client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
 
 	facts, err := bolt.LoadFacts(ticker)
 

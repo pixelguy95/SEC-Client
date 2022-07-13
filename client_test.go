@@ -14,13 +14,13 @@ func NewRecorderPersistenceLayer() (*RecorderPersistenceLayer, error) {
 	return &RecorderPersistenceLayer{loads: make(map[string]int), saves: make(map[string]int), shouldLoad: true}, nil
 }
 
-func (persistenceLayer *RecorderPersistenceLayer) SaveFacts(ticker Ticker, facts *CompanyFacts) error {
-	persistenceLayer.saves[ticker.Symbol] = (persistenceLayer.saves[ticker.Symbol] + 1)
+func (persistenceLayer *RecorderPersistenceLayer) SaveFacts(ticker Ticker, _ *CompanyFacts) error {
+	persistenceLayer.saves[ticker.Symbol]++
 	return nil
 }
 
 func (persistenceLayer *RecorderPersistenceLayer) LoadFacts(ticker Ticker) (*CompanyFacts, error) {
-	persistenceLayer.loads[ticker.Symbol] = (persistenceLayer.loads[ticker.Symbol] + 1)
+	persistenceLayer.loads[ticker.Symbol]++
 
 	if persistenceLayer.shouldLoad {
 		return nil, nil
@@ -31,11 +31,11 @@ func (persistenceLayer *RecorderPersistenceLayer) LoadFacts(ticker Ticker) (*Com
 
 func TestPersistenceLayer(t *testing.T) {
 	recorder, _ := NewRecorderPersistenceLayer()
-	client := NewSecClientWithPersistence(recorder)
+	client := NewClientWithPersistence(recorder)
 
 	ticker, _ := client.GetTickerForSymbol("AAPL")
 
-	client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
 
 	recorder.shouldLoad = false
 
@@ -47,9 +47,9 @@ func TestPersistenceLayer(t *testing.T) {
 		t.Fatal("Expected exactly 1 save call to persistence layer")
 	}
 
-	client.GetAllFactsForTicker(ticker)
-	client.GetAllFactsForTicker(ticker)
-	client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
 
 	if recorder.loads["AAPL"] != 4 {
 		t.Fatal("Expected exactly 4 load call to persistence layer")
@@ -61,7 +61,7 @@ func TestPersistenceLayer(t *testing.T) {
 
 	recorder.shouldLoad = true
 
-	client.GetAllFactsForTicker(ticker)
+	_, _ = client.GetAllFactsForTicker(ticker)
 
 	if recorder.loads["AAPL"] != 5 {
 		t.Fatal("Expected exactly 5 load call to persistence layer")

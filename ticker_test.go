@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetAllTickers(t *testing.T) {
-	client := NewSecClient()
+	client := NewClient()
 	tickers, err := client.GetAllTickers()
 
 	if err != nil {
@@ -38,11 +38,12 @@ func TestGetAllTickers(t *testing.T) {
 }
 
 func TestGetAllTickersCached(t *testing.T) {
-	client := NewSecClient()
-	client.GetAllTickers()
-	client.GetAllTickers()
-	client.GetAllTickers()
-	client.GetAllTickers()
+	client := NewClient()
+	_, _ = client.GetAllTickers()
+	_, _ = client.GetAllTickers()
+	_, _ = client.GetAllTickers()
+	_, _ = client.GetAllTickers()
+	_, _ = client.GetAllTickers()
 	tickers, err := client.GetAllTickers()
 
 	if err != nil {

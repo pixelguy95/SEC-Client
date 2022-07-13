@@ -7,7 +7,7 @@ import (
 
 func TestGetCompanyFacts(t *testing.T) {
 
-	client := NewSecClient()
+	client := NewClient()
 
 	companyFacts, err := client.GetAllFactsForTicker(Ticker{CIK: 320193})
 	if err != nil {
@@ -32,7 +32,7 @@ func TestGetCompanyFacts(t *testing.T) {
 	for _, unit := range liabilitiesNonCurrent.Units["USD"] {
 		fmt.Println(unit)
 		if !unit.IsInstant() || unit.IsPeriod() {
-			t.Fatal("Liabilities non-current sohuld be instant and not period")
+			t.Fatal("Liabilities non-current should be instant and not period")
 		}
 	}
 

@@ -8,7 +8,7 @@ type CompanyFacts struct {
 	Facts      Facts  `json:"facts"`
 }
 
-// A representation of a
+// Facts A representation of a
 type Facts struct {
 	DEI    map[string]Fact `json:"dei"`
 	UsGAAP map[string]Fact `json:"us-gaap"`

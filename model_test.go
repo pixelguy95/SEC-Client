@@ -11,7 +11,7 @@ func TestUnitUtils(t *testing.T) {
 	}
 
 	if unit.IsQuarterRange() {
-		t.Fatal("unit was considred to be quarter, even though it is not")
+		t.Fatal("unit was considered to be quarter, even though it is not")
 	}
 
 	if !unit.IsYearRange() {
@@ -19,7 +19,7 @@ func TestUnitUtils(t *testing.T) {
 	}
 
 	if unit.IsInstant() {
-		t.Fatal("unit was considered to be instant, even togh it is not")
+		t.Fatal("unit was considered to be instant, even though it is not")
 	}
 
 	if !unit.EndAsTime().Equal(StandardSecDateFormatParseSwallowError("2022-01-01")) {
@@ -44,7 +44,7 @@ func TestUnitUtilsWithQuarterly(t *testing.T) {
 	}
 
 	if !unit.IsQuarterRange() {
-		t.Fatal("unit was not considred to be quarter")
+		t.Fatal("unit was not considered to be quarter")
 	}
 
 	if unit.IsYearRange() {

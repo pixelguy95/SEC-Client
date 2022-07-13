@@ -27,7 +27,10 @@ func NewBoltPersistenceLayer(config BoltPersistenceLayerConfig) (*BoltPersistenc
 	}
 
 	err = db.Update(func(tx *bbolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte("companyFacts"))
+		_, err := tx.CreateBucketIfNotExists([]byte("companyFacts"))
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 
@@ -55,10 +58,16 @@ func (persistenceLayer *BoltPersistenceLayer) SaveFacts(ticker sec.Ticker, facts
 		var pcf = &PersistedCompanyFacts{Facts: *facts, Timestamp: time.Now().UnixMilli()}
 		b := bytes.Buffer{}
 		encoder := gob.NewEncoder(&b)
-		encoder.Encode(pcf)
+		err := encoder.Encode(pcf)
+		if err != nil {
+			return err
+		}
 
 		bucket := tx.Bucket([]byte("companyFacts"))
-		bucket.Put([]byte(ticker.Symbol), b.Bytes())
+		err = bucket.Put([]byte(ticker.Symbol), b.Bytes())
+		if err != nil {
+			return err
+		}
 
 		return nil
 	})
@@ -94,7 +103,11 @@ func (persistenceLayer *BoltPersistenceLayer) LoadFacts(ticker sec.Ticker) (*sec
 		}
 
 		if (pcf.Timestamp + persistenceLayer.config.ExpiresAfter.Milliseconds()) < time.Now().UnixMilli() {
-			bucket.Delete([]byte(ticker.Symbol))
+			err := bucket.Delete([]byte(ticker.Symbol))
+			if err != nil {
+				return err
+			}
+
 			pcf = nil
 			return nil
 		}

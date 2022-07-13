@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (client *SecClient) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, error) {
+func (client *Client) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, error) {
 
 	if client.persistenceLayer != nil {
 		persistedFacts, err := client.persistenceLayer.LoadFacts(ticker)
@@ -21,7 +21,7 @@ func (client *SecClient) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, erro
 	}
 
 	httpClient := &http.Client{}
-	req, err := client.GetHttpGetRequestWithProperHeaders(factEndpointUrl(ticker))
+	req, err := getHttpGetRequestWithProperHeaders(factEndpointUrl(ticker))
 
 	client.bucket.Take()
 	response, err := httpClient.Do(req)
