@@ -24,6 +24,9 @@ type Ticker struct {
 	Name string `json:"title"`
 }
 
+// tickerEndpointResponse represents the data structure of the response to the tickers endpoint
+type tickerEndpointResponse map[string]Ticker
+
 // GetAllTickers Fetches all current tickers from the sec.gov api, uses caching for speed
 func (client *Client) GetAllTickers() ([]Ticker, error) {
 
@@ -44,7 +47,7 @@ func (client *Client) GetAllTickers() ([]Ticker, error) {
 	client.cachedTickersLock.RUnlock()
 	client.cachedTickersLock.Lock()
 	httpClient := &http.Client{}
-	req, err := getHttpGetRequestWithProperHeaders(TickerEndpoint)
+	req, err := getHttpGetRequestWithProperHeaders(tickerEndpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -67,14 +70,14 @@ func (client *Client) GetAllTickers() ([]Ticker, error) {
 		return nil, err
 	}
 
-	var tickerMap map[string]Ticker
-	err = json.Unmarshal(body, &tickerMap)
+	var tickerResponse tickerEndpointResponse
+	err = json.Unmarshal(body, &tickerResponse)
 	if err != nil {
 		return nil, err
 	}
 
-	tickers := make([]Ticker, 0, len(tickerMap))
-	for _, v := range tickerMap {
+	tickers := make([]Ticker, 0, len(tickerResponse))
+	for _, v := range tickerResponse {
 		tickers = append(tickers, v)
 	}
 
@@ -90,6 +93,7 @@ func (client *Client) GetAllTickers() ([]Ticker, error) {
 	return copyOfAllTickers, nil
 }
 
+// GetTickerForSymbol returns the ticker with the given symbol
 func (client *Client) GetTickerForSymbol(symbol string) (Ticker, error) {
 	tickers, err := client.GetAllTickers()
 	if err != nil {
@@ -110,6 +114,7 @@ func (client *Client) GetTickerForSymbol(symbol string) (Ticker, error) {
 	return Ticker{}, errors.New("ticker with symbol " + symbol + " not found")
 }
 
+// GetTickerForCIK returns the ticker with the given cik
 func (client *Client) GetTickerForCIK(cik uint64) (Ticker, error) {
 	tickers, err := client.GetAllTickers()
 	if err != nil {

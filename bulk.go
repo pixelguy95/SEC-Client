@@ -35,7 +35,7 @@ func (client *Client) GetBulk() (chan *TickerWithFacts, error) {
 
 	// Preparing request
 	httpClient := &http.Client{}
-	req, err := getHttpGetRequestWithProperHeaders(AllCompanyFactsEndpoint)
+	req, err := getHttpGetRequestWithProperHeaders(allCompanyFactsEndpoint)
 	if err != nil {
 		return nil, err
 	}

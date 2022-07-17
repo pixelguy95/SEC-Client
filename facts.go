@@ -1,8 +1,8 @@
 package sec
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/mailru/easyjson"
 	"io"
 	"net/http"
 )
@@ -37,7 +37,7 @@ func (client *Client) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, error) 
 	}
 
 	var companyFacts CompanyFacts
-	err = json.Unmarshal(body, &companyFacts)
+	err = easyjson.Unmarshal(body, &companyFacts)
 	if err != nil {
 		return CompanyFacts{}, err
 	}
@@ -53,5 +53,5 @@ func (client *Client) GetAllFactsForTicker(ticker Ticker) (CompanyFacts, error) 
 }
 
 func factEndpointUrl(ticker Ticker) string {
-	return CompanyFactsEndpoint + "/" + "CIK" + fmt.Sprintf("%010d", ticker.CIK) + ".json"
+	return companyFactsEndpoint + "/" + "CIK" + fmt.Sprintf("%010d", ticker.CIK) + ".json"
 }

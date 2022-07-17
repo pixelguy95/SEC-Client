@@ -1,16 +1,16 @@
 package sec
 
-const Protocol string = "https://"
-const SecUrl string = "www.sec.gov"
-const SecReportUrl string = "www.sec.report"
-const SecDataUrl string = "data.sec.gov"
-const CompanyFactsZip string = "/Archives/edgar/daily-index/xbrl/companyfacts.zip"
+const protocol string = "https://"
+const secUrl string = "www.sec.gov"
+const secReportUrl string = "www.sec.report"
+const secDataUrl string = "data.sec.gov"
+const companyFactsZip string = "/Archives/edgar/daily-index/xbrl/companyfacts.zip"
 
-const FilingsUrlEndpoint = Protocol + SecReportUrl + "/Senate-Stock-Disclosures/Filings"
-const TickerEndpoint = Protocol + SecUrl + "/files/company_tickers.json"
-const CompanyFactsEndpoint = Protocol + SecDataUrl + "/api/xbrl/companyfacts"
-const AllCompanyFactsEndpoint = Protocol + SecUrl + CompanyFactsZip
+const filingsUrlEndpoint = protocol + secReportUrl + "/Senate-Stock-Disclosures/Filings"
+const tickerEndpoint = protocol + secUrl + "/files/company_tickers.json"
+const companyFactsEndpoint = protocol + secDataUrl + "/api/xbrl/companyfacts"
+const allCompanyFactsEndpoint = protocol + secUrl + companyFactsZip
 
 func CompleteUrl(partial string) string {
-	return Protocol + SecReportUrl + partial
+	return protocol + secReportUrl + partial
 }
